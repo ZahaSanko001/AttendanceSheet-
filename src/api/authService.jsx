@@ -1,11 +1,11 @@
 import api from "./apiClient";
 
-export const login = async (email, password) => {
-    const res = await api.post("/api/teachers/login", { email, password });
-    return res.data.token;
+export const login = async (email, passphrase) => {
+  const res = await api.post("/teachers/login", { email, passphrase });
+  return res.data.token;
 };
 
-export const register = async (email, password) => {
-    const res = await api.post("/api/teachers/signup", { email, password });
-    return res.data;
+export const register = async (name, email, passphrase) => {
+  const res = await api.post("/teachers/signup", { name, email, passphrase });
+  return res.data;
 };

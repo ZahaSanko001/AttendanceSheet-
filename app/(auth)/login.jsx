@@ -4,16 +4,16 @@ import { AuthContext } from "../../src/contexts/AuthContext";
 
 export default function LoginScreen() {
     const { login } = useContext(AuthContext);
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Login</Text>
             <TextInput
-                placeholder="Username"
-                value={username}
-                onChangeText={setUsername}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
                 style={styles.input}
             />
             <TextInput
@@ -23,7 +23,7 @@ export default function LoginScreen() {
                 onChangeText={setPassword}
                 style={styles.input}
             />
-            <Button title="Login" onPress={() => login(username, password)} />
+            <Button title="Login" onPress={() => login(email, password)} />
         </View>
     );
 }
