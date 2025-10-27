@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, Children } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useEffect, useState } from 'react';
 import { login as loginApi } from '../api/authService';
 
 export const AuthContext = createContext();
@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
             setUserToken(token);
             await AsyncStorage.setItem("token", token);
         } catch (err) {
-            console.error("Login failed", err);
+            console.error("Login_failed", err);
         }
     };
 

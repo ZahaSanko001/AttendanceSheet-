@@ -1,21 +1,31 @@
-import { useState } from "react";
+/* import { useState } from "react";
 import { View, Text, Button, FlatList, TextInput, Alert } from "react-native";
 import { BleManager } from "react-native-ble-plx";
-import { findStudent } from "../../src/api/attendanceService";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { verifyStudents } from "../../src/api/attendanceService";
 
 const manager = new BleManager();
 
 export default function ScanScreen() {
     const [devices, setDevices] = useState([]);
-    const [studentId, setStudentId] = useState("");
+    const [validStudents, setValidStudents] = useState([]);
     const [code, setCode] = useState("");
+    const [scanning, setScanning] = useState(false);
 
     const scanDevices = () => {
+      if (!code.trim()) {
+        Alert.alert("Missing Info", "Please enter the course code first.");
+        return;
+      }
+
       setDevices([]);
+      setValidStudents([]);
+      setScanning(true);
+
       manager.startDeviceScan(null, null, (error, device) => {
         if (error) {
           console.error("BLE Scan Error:", error);
+          Alert.alert("Error", "Could not start scanning for devices.");
+          setScanning(false);
           return;
         }
 
@@ -24,39 +34,41 @@ export default function ScanScreen() {
         }
       });
 
-      setTimeout(() => {
+      setTimeout(async () => {
         manager.stopDeviceScan();
+        setScanning(false);
+        console.log("Scan complete. Verifying students...");
+
+        if (devices.length > 0) {
+          await filterValidStudents(devices);
+        }
       }, 5000);
     };
 
-    const handleAttendance = async () => {
+    const filterValidStudents = async () => {
       try {
-        const uuid = await AsyncStorage.getItem("student_uuid");
-        if (!uuid) {
-          Alert.alert("Not Registered", "Please register this student first.");
+        const uuids = devices.map((d) => d.id);
+        if (uuids.length === 0) {
+          Alert.alert("No Devices", "No devices found during scan.");
           return;
         }
 
-        const student = await findStudent(studentId, code, uuid);
-        if (student) {
-          Alert.alert("Success", `Attendance marked for ${student.name}`);
+        const result = await verifyStudents(code, uuids);
+        setValidStudents(result);
+
+        if (result.length === 0) {
+          Alert.alert("No Valid Students", "No valid students found for this course.");
         } else {
-          Alert.alert("Error", "Student not found or UUID mismatch.");
+          Alert.alert("Scan Complete", `${result.length} valid students found.`);
         }
       } catch (e) {
-        console.error("Attendance error:", e);
-        Alert.alert("Error", "Could not verify student.");
+        console.error("Verification Error:", e);
+        Alert.alert("Error", "Failed to verify scanned students.");
       }
     };
 
-    return (
+  return (
       <View style={{ flex: 1, padding: 20 }}>
-        <TextInput
-          placeholder="Enter Student ID"
-          value={studentId}
-          onChangeText={setStudentId}
-          style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-        />
         <TextInput
           placeholder="Enter Course Code"
           value={code}
@@ -64,8 +76,9 @@ export default function ScanScreen() {
           style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
         />
 
-        <Button title="Scan for Devices" onPress={scanDevices} />
+        <Button title={scanning ? "Scanning..." : "Scan for Devices"} onPress={scanDevices} disabled={scanning} />
 
+        <Text style={{ marginTop: 20, fontWeight: "bold" }}>Detected Devices ({devices.length}):</Text>
         <FlatList
           data={devices}
           keyExtractor={(item) => item.id}
@@ -76,7 +89,19 @@ export default function ScanScreen() {
           )}
         />
 
-        <Button title="Mark Attendance" onPress={handleAttendance} />
+        <Text style={{ marginTop: 20, fontWeight: "bold" }}>Valid Students ({validStudents.length}):</Text>
+        <FlatList
+          data={validStudents}
+          keyExtractor={(item) => item.uuid}
+          renderItem={({ item }) => (
+            <View style={{ margin: 10, backgroundColor: "#e0f7fa", padding: 10, borderRadius: 8 }}>
+              <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+              <Text>ID: {item.studentId}</Text>
+              <Text>UUID: {item.uuid}</Text>
+            </View>
+          )}
+        />
       </View>
-    );
+  );
 }
+ */

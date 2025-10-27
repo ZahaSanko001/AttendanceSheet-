@@ -1,11 +1,13 @@
 import { useState, useContext } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { AuthContext } from "../../src/contexts/AuthContext";
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
 
     return (
         <View style={styles.container}>
@@ -24,6 +26,7 @@ export default function LoginScreen() {
                 style={styles.input}
             />
             <Button title="Login" onPress={() => login(email, password)} />
+            <Button title="Register" onPress={() => router.push("/(auth)/RegisterTeacher")} />
         </View>
     );
 }
